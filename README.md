@@ -1,4 +1,4 @@
-# Nama Projek
+# Doxing
 
 Skrip ini memproses fail dalam pelbagai format (.csv, .xlsx, .pdf, .docx, .txt) untuk mencari dan memaparkan data berdasarkan kata kunci yang diberikan. Hasil carian ditampilkan dalam bentuk jadual berformat dan termasuk pautan yang boleh diklik untuk carian Google dan peta Google.
 
