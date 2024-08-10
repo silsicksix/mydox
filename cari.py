@@ -1,5 +1,17 @@
 import spacy
+
+# Muatkan model bahasa
 nlp = spacy.load("en_core_web_sm")
+
+# Contoh teks
+text = "This is a sample sentence."
+doc = nlp(text)
+
+# Paparkan hasil analisis
+for token in doc:
+    print(f"{token.text}: {token.pos_}, {token.dep_}")
+
+
 import subprocess
 import pandas as pd
 import os
