@@ -12,7 +12,7 @@ Pastikan anda mempunyai Python 3.6 atau yang lebih baru dipasang pada sistem and
 
    ```bash
    git clone https://github.com/silsicksix/mydox.git
-   cd repository-name
+   cd mydox
    ```
 
 2. **Muat turun dan pasang keperluan:**
