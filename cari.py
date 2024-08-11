@@ -34,7 +34,7 @@ import re
 import webbrowser
 
 # Muatkan model bahasa
-nlp = spacy.load("en_core_web_lg")
+nlp = spacy.load("en_core_web_sd")
 
 # Contoh teks
 text = "This is a sample sentence."
@@ -56,10 +56,10 @@ def print_doxing_header():
 
 # Install spacy dan model bahasa yang dibutuhkan
 subprocess.check_call(["pip", "install", "spacy"])
-subprocess.check_call(["python", "-m", "spacy", "download", "en_core_web_lg"])
+subprocess.check_call(["python", "-m", "spacy", "download", "en_core_web_sd"])
 
 # Load model bahasa spacy
-nlp = spacy.load("en_core_web_lg")
+nlp = spacy.load("en_core_web_sd")
 
 # Kemaskini pandas jika perlu
 subprocess.check_call(["pip", "install", "--upgrade", "pandas"])
