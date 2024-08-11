@@ -1,12 +1,21 @@
 import subprocess
 import sys
+import os
+import pandas as pd
+from tabulate import tabulate
+from colorama import Fore, Style, init
+from pyfiglet import Figlet
+from PyPDF2 import PdfReader
+import docx
+import re
+import webbrowser
+import spacy
 
 def install_requirements():
     """Install requirements from requirements.txt if not already installed."""
     try:
         import pandas
         import spacy
-        import os
         from tabulate import tabulate
         from colorama import Fore, Style, init
         from pyfiglet import Figlet
@@ -23,26 +32,16 @@ install_requirements()
 
 # Import modules after ensuring they are installed
 import spacy
-import pandas as pd
-import os
-from tabulate import tabulate
-from colorama import Fore, Style, init
-from pyfiglet import Figlet
-from PyPDF2 import PdfReader
-import docx
-import re
-import webbrowser
 
-# Muatkan model bahasa
-nlp = spacy.load("en_core_web_sd")
+# Ganti "en_core_web_lg" dengan nama model yang telah diinstal jika berbeda
+nlp = spacy.load("en_core_web_md")
 
-# Contoh teks
-text = "This is a sample sentence."
-doc = nlp(text)
+# Cek apakah model berhasil dimuat
+print("Model loaded successfully")
 
-# Paparkan hasil analisis
-for token in doc:
-    print(f"{token.text}: {token.pos_}, {token.dep_}")
+# Contoh penggunaan model
+doc = nlp("Tiada Persembunyian Dalam Pencarian")
+print([token.text for token in doc])
 
 # Inisialisasi colorama
 init(autoreset=True)
@@ -53,19 +52,6 @@ def print_doxing_header():
     doxing_text = figlet.renderText('DOXING')
     print(Fore.CYAN + Style.BRIGHT + doxing_text)
     print(Style.RESET_ALL)
-
-# Install spacy dan model bahasa yang dibutuhkan
-subprocess.check_call(["pip", "install", "spacy"])
-subprocess.check_call(["python", "-m", "spacy", "download", "en_core_web_sd"])
-
-# Load model bahasa spacy
-nlp = spacy.load("en_core_web_sd")
-
-# Kemaskini pandas jika perlu
-subprocess.check_call(["pip", "install", "--upgrade", "pandas"])
-
-# Paparkan perkataan DOXING sebelum memulakan pemprosesan
-print_doxing_header()
 
 def highlight_keyword(text, keyword):
     """Highlight keyword dalam teks"""
@@ -158,110 +144,121 @@ def format_entities_for_output(entities):
             output_lines.append(f"{category}: {highlight_keyword(item, item)} | Link: {link}")
     return output_lines
 
-# Folder yang mengandungi fail
-folder_path = '/home/kali/Documents/test'  # Gantikan dengan laluan sebenar folder anda
+def process_files(folder_path, search_value, max_results):
+    """Proses setiap fail dalam folder dengan nilai carian dan had hasil yang ditentukan"""
+    files = os.listdir(folder_path)
+    for file in files:
+        file_path = os.path.join(folder_path, file)
+        print(f"\nMemproses fail: {file}\n")
 
-# Dapatkan senarai semua fail dalam folder
-files = os.listdir(folder_path)
+        try:
+            if file.endswith('.csv'):
+                # Proses CSV
+                filtered_df = process_csv(file_path, search_value)
+                if not filtered_df.empty:
+                    # Highlighting keywords dalam CSV
+                    for col in filtered_df.columns:
+                        if filtered_df[col].dtype == 'object':
+                            filtered_df[col] = filtered_df[col].apply(lambda x: highlight_keyword(str(x), search_value))
+                    table = tabulate(filtered_df.head(max_results), headers='keys', tablefmt='grid', showindex=False)
+                    print(table)
+                    for _, row in filtered_df.iterrows():
+                        combined_text = ' '.join(str(val) for val in row)
+                        entities = analyze_text_with_spacy(combined_text)
+                        output_lines = format_entities_for_output(entities)
+                        for line in output_lines:
+                            print(line)
+                else:
+                    print(f"Tidak terdapat sebarang hasil untuk '{search_value}' dalam fail '{file}'.")
 
-# Terima input dari pengguna untuk pencarian
-search_value = input("Masukkan nilai yang ingin dicari: ").strip()
+            elif file.endswith('.xls') or file.endswith('.xlsx'):
+                # Proses Excel
+                filtered_df = process_excel(file_path, search_value)
+                if not filtered_df.empty:
+                    table = tabulate(filtered_df.head(max_results), headers='keys', tablefmt='grid', showindex=False)
+                    print(table)
+                    for _, row in filtered_df.iterrows():
+                        combined_text = ' '.join(str(val) for val in row)
+                        entities = analyze_text_with_spacy(combined_text)
+                        output_lines = format_entities_for_output(entities)
+                        for line in output_lines:
+                            print(line)
+                else:
+                    print(f"Tidak terdapat sebarang hasil untuk '{search_value}' dalam fail '{file}'.")
 
-# Tanya pengguna berapa banyak hasil yang ingin dipaparkan
-try:
-    max_results = int(input("Masukkan bilangan hasil yang ingin dipaparkan: ").strip())
-except ValueError:
-    print("Sila masukkan nombor yang sah.")
-    exit()
+            elif file.endswith('.pdf'):
+                # Proses PDF
+                filtered_text = process_pdf(file_path, search_value)
+                if filtered_text:
+                    for line in filtered_text[:max_results]:
+                        highlighted_line = highlight_keyword(line, search_value)
+                        print(highlighted_line)
+                        entities = analyze_text_with_spacy(highlighted_line)
+                        output_lines = format_entities_for_output(entities)
+                        for line in output_lines:
+                            print(line)
+                else:
+                    print(f"Tidak terdapat sebarang hasil untuk '{search_value}' dalam fail '{file}'.")
 
-# Proses setiap fail
-for file in files:
-    file_path = os.path.join(folder_path, file)
-    print(f"\nMemproses fail: {file}\n")
+            elif file.endswith('.doc') or file.endswith('.docx'):
+                # Proses DOCX
+                filtered_text = process_docx(file_path, search_value)
+                if filtered_text:
+                    for line in filtered_text[:max_results]:
+                        highlighted_line = highlight_keyword(line, search_value)
+                        print(highlighted_line)
+                        entities = analyze_text_with_spacy(line)
+                        output_lines = format_entities_for_output(entities)
+                        for line in output_lines:
+                            print(line)
+                else:
+                    print(f"Tidak terdapat sebarang hasil untuk '{search_value}' dalam fail '{file}'.")
 
-    try:
-        if file.endswith('.csv'):
-            # Proses CSV
-            filtered_df = process_csv(file_path, search_value)
-            if not filtered_df.empty:
-                # Highlighting keywords dalam CSV
-                for col in filtered_df.columns:
-                    if filtered_df[col].dtype == 'object':
-                        filtered_df[col] = filtered_df[col].apply(lambda x: highlight_keyword(str(x), search_value))
-                table = tabulate(filtered_df.head(max_results), headers='keys', tablefmt='grid', showindex=False)
-                print(table)
-                for _, row in filtered_df.iterrows():
-                    combined_text = ' '.join(str(val) for val in row)
-                    entities = analyze_text_with_spacy(combined_text)
-                    output_lines = format_entities_for_output(entities)
-                    for line in output_lines:
-                        print(line)
+            elif file.endswith('.txt'):
+                # Proses TXT
+                filtered_text = process_txt(file_path, search_value)
+                if filtered_text:
+                    for line in filtered_text[:max_results]:
+                        highlighted_line = highlight_keyword(line, search_value)
+                        print(highlighted_line)
+                        entities = analyze_text_with_spacy(line)
+                        output_lines = format_entities_for_output(entities)
+                        for line in output_lines:
+                            print(line)
+                else:
+                    print(f"Tidak terdapat sebarang hasil untuk '{search_value}' dalam fail '{file}'.")
+
             else:
-                print(f"Tidak terdapat sebarang hasil untuk '{search_value}' dalam fail '{file}'.")
+                print(f"Format fail '{file}' tidak disokong.")
 
-        elif file.endswith('.xls') or file.endswith('.xlsx'):
-            # Proses Excel
-            filtered_df = process_excel(file_path, search_value)
-            if not filtered_df.empty:
-                table = tabulate(filtered_df.head(max_results), headers='keys', tablefmt='grid', showindex=False)
-                print(table)
-                for _, row in filtered_df.iterrows():
-                    combined_text = ' '.join(str(val) for val in row)
-                    entities = analyze_text_with_spacy(combined_text)
-                    output_lines = format_entities_for_output(entities)
-                    for line in output_lines:
-                        print(line)
-            else:
-                print(f"Tidak terdapat sebarang hasil untuk '{search_value}' dalam fail '{file}'.")
+        except Exception as e:
+            print(f"Ralat pemprosesan fail: {e}")
 
-        elif file.endswith('.pdf'):
-            # Proses PDF
-            filtered_text = process_pdf(file_path, search_value)
-            if filtered_text:
-                for line in filtered_text[:max_results]:
-                    highlighted_line = highlight_keyword(line, search_value)
-                    print(highlighted_line)
-                    entities = analyze_text_with_spacy(highlighted_line)
-                    output_lines = format_entities_for_output(entities)
-                    for line in output_lines:
-                        print(line)
-            else:
-                print(f"Tidak terdapat sebarang hasil untuk '{search_value}' dalam fail '{file}'.")
+        print("\n" + "="*40 + "\n")
 
-        elif file.endswith('.doc') or file.endswith('.docx'):
-            # Proses DOCX
-            filtered_text = process_docx
-            # Proses DOCX
-            filtered_text = process_docx(file_path, search_value)
-            if filtered_text:
-                for line in filtered_text[:max_results]:
-                    highlighted_line = highlight_keyword(line, search_value)
-                    print(highlighted_line)
-                    entities = analyze_text_with_spacy(line)
-                    output_lines = format_entities_for_output(entities)
-                    for line in output_lines:
-                        print(line)
-            else:
-                print(f"Tidak terdapat sebarang hasil untuk '{search_value}' dalam fail '{file}'.")
+def main():
+    # Folder yang mengandungi fail
+    folder_path = '/home/kali/Documents/test'  # Gantikan dengan laluan sebenar folder anda
 
-        elif file.endswith('.txt'):
-            # Proses TXT
-            filtered_text = process_txt(file_path, search_value)
-            if filtered_text:
-                for line in filtered_text[:max_results]:
-                    highlighted_line = highlight_keyword(line, search_value)
-                    print(highlighted_line)
-                    entities = analyze_text_with_spacy(line)
-                    output_lines = format_entities_for_output(entities)
-                    for line in output_lines:
-                        print(line)
-            else:
-                print(f"Tidak terdapat sebarang hasil untuk '{search_value}' dalam fail '{file}'.")
+    # Paparkan perkataan DOXING sebelum memulakan pemprosesan
+    print_doxing_header()
 
-        else:
-            print(f"Format fail '{file}' tidak disokong.")
+    while True:
+        # Terima input dari pengguna untuk pencarian
+        search_value = input("Masukkan nilai yang ingin dicari (atau 'keluar' untuk berhenti): ").strip()
+        if search_value.lower() == 'keluar':
+            print("Keluar dari aplikasi.")
+            break
 
-    except Exception as e:
-        print(f"Ralat pemprosesan fail: {e}")
+        # Tanya pengguna berapa banyak hasil yang ingin dipaparkan
+        try:
+            max_results = int(input("Masukkan bilangan hasil yang ingin dipaparkan: ").strip())
+        except ValueError:
+            print("Sila masukkan nombor yang sah.")
+            continue
 
-    print("\n" + "="*40 + "\n")
+        # Jalankan pemprosesan
+        process_files(folder_path, search_value, max_results)
+
+if __name__ == "__main__":
+    main()
