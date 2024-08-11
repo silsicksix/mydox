@@ -1,0 +1,11 @@
+﻿pandas
+PyPDF2
+python-docx
+xlrd
+textract==1.6.3
+colorama
+pyfiglet
+tabulate
+spacy
+transformers
+torch
