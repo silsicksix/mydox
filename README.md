@@ -1,13 +1,18 @@
-# Doxing
+# Panduan Menggunakan Doxing
 
-Skrip ini memproses fail dalam pelbagai format (.csv, .xlsx, .pdf, .docx, .txt) untuk mencari dan memaparkan data berdasarkan kata kunci yang diberikan. Hasil carian ditampilkan dalam bentuk jadual berformat dan termasuk pautan yang boleh diklik untuk carian Google dan peta Google.
+Panduan ini akan memandu Anda untuk menjalankan skrip Python yang memproses berbagai format file untuk mencari dan menyoroti teks yang relevan. Skrip ini juga akan menganalisis teks untuk entiti seperti nama, nombor telefon, nombor IC, dan alamat.
+Prasyarat
 
-## Prasyarat
+Sebelum Anda memulakan, pastikan anda mempunyai:
 
-Pastikan anda mempunyai Python 3.6 atau yang lebih baru dipasang pada sistem anda. Anda juga perlu memasang beberapa pustaka Python yang diperlukan oleh skrip ini. Anda boleh memasangnya dengan menggunakan `requirements.txt`.
+    Python 3.7 atau lebih tinggi: Pastikan Python sudah dipasang di sistem anda. Anda boleh memuat turun Python dari laman web rasmi Python.
 
-## Arahan Pemasangan
+    Pakej-pakej yang diperlukan: Skrip ini memerlukan beberapa pustaka Python yang akan diinstal melalui requirements.txt.
 
+Langkah-Langkah
+1. Clone Repositori
+
+Clone repositori GitHub ini ke mesin anda:
 1. **Clone repositori:**
 
    ```bash
@@ -15,22 +20,48 @@ Pastikan anda mempunyai Python 3.6 atau yang lebih baru dipasang pada sistem and
    cd mydox
    ```
 
-2. **Muat turun dan pasang keperluan:**
+2. Buat dan Aktifkan Persekitaran Maya
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+Disarankan untuk menggunakan persekitaran maya untuk mengelakkan konflik antara pakej-pakej Python:
+python -m venv env
+source env/bin/activate  # Pada Windows, gunakan `env\Scripts\activate`
 
-3. **Download model spaCy:**
+3. Pasang Keperluan
 
-   ```bash
-   python -m spacy download en_core_web_sm
-   ```
+Pasang semua pustaka yang diperlukan menggunakan requirements.txt:
+pip install -r requirements.txt
 
-4. **Jalankan skrip:**
+4. Muat Turun Model spaCy
 
-   ```bash
-   python src/cari.py
+Skrip ini menggunakan model bahasa spaCy untuk analisis teks. Muat turun model yang diperlukan dengan arahan berikut:
+python -m spacy download en_core_web_md
+
+
+5. Sediakan Fail-fail Anda
+
+Pastikan anda mempunyai fail yang ingin diproses dalam folder tertentu. Folder ini perlu mengandungi fail-fail dengan format .csv, .xls, .xlsx, .pdf, .docx, dan .txt dan lain-lain.
+
+Ubah nilai folder_path dalam skrip Python anda kepada laluan folder di mana fail-fail tersebut berada. Lihat pada line 
+bernombor 241 (/home/kali/Documents/test) ubah kepada lokasi dimana anda letakkan file dan skrip ini.
+
+6. Jalankan Skrip
+
+Jalankan skrip Python dengan arahan berikut:
+python cari.py
+
+
+7. Masukkan Nilai Carian dan Bilangan Hasil
+
+Apabila diminta, masukkan nilai yang ingin dicari dalam fail dan bilangan hasil yang ingin dipaparkan. Skrip ini akan memproses setiap fail dalam folder dan memaparkan hasil yang sesuai di terminal.
+Contoh Hasil
+
+Skrip ini akan memaparkan hasil yang dipadankan dari fail yang diproses, menyoroti kata kunci, dan memberikan pautan Google untuk carian dan Google Maps untuk alamat.
+Masalah yang Mungkin Timbul
+
+Jika anda mengalami masalah seperti kegagalan memuatkan model spaCy atau masalah dengan pemasangan pustaka, pastikan anda telah mengikuti langkah-langkah di atas dengan betul. Semak juga sambungan internet anda dan cuba jalankan semula skrip.
+Sokongan
+
+Jika anda memerlukan bantuan tambahan, sila buka isu baru di repositori GitHub ini atau hubungi saya melalui Telegram di [@KanDear].
    ```
 
 Pastikan anda telah menyediakan folder `data` dengan fail yang sesuai untuk diuji.
