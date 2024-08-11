@@ -13,6 +13,20 @@ for token in doc:
 
 
 import subprocess
+import sys
+
+def install_requirements():
+    """Install requirements from requirements.txt if not already installed."""
+    try:
+        import pandas
+        import spacy
+        # Add other imports here if necessary
+    except ImportError as e:
+        print(f"Missing module: {e.name}. Installing...")
+        subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-r', 'requirements.txt'])
+
+# Call the function to ensure all requirements are installed
+install_requirements()
 import pandas as pd
 import os
 from tabulate import tabulate
