@@ -74,7 +74,7 @@ Pastikan anda telah menyediakan folder `data` dengan fail yang sesuai untuk diuj
 
 Skrip ini memerlukan input dari pengguna untuk menentukan kata kunci dan bilangan hasil yang ingin dipaparkan. Contohnya:
 
-Masukkan nilai yang ingin dicari: AHMAD BIN SULAIMAN
+Masukkan nama yang ingin dicari: AHMAD BIN SULAIMAN
 Masukkan bilangan hasil yang ingin dipaparkan: 5
 Hasil carian akan dipaparkan dalam terminal dengan pautan yang boleh diklik untuk carian Google dan peta Google jika ada alamatnya.
 
