@@ -1,7 +1,7 @@
 import spacy
 
 # Muatkan model bahasa
-nlp = spacy.load("en_core_web_sm")
+nlp = spacy.load("en_core_web_lg")
 
 # Contoh teks
 text = "This is a sample sentence."
