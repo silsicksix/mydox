@@ -21,32 +21,38 @@ Clone repositori GitHub ini ke mesin anda:
 2. Buat dan Aktifkan Persekitaran Maya
 
 Disarankan untuk menggunakan persekitaran maya untuk mengelakkan konflik antara pakej-pakej Python:
+  ```bash
 python -m venv env
 source env/bin/activate  # Pada Windows, gunakan `env\Scripts\activate`
+ ```
 
 3. Pasang Keperluan
 
 Pasang semua pustaka yang diperlukan menggunakan requirements.txt:
+  ```bash
 pip install -r requirements.txt
+ ```
 
 4. Muat Turun Model spaCy
 
 Skrip ini menggunakan model bahasa spaCy untuk analisis teks. Muat turun model yang diperlukan dengan arahan berikut:
+  ```bash
 python -m spacy download en_core_web_md
-
+ ```
 
 5. Sediakan Fail-fail Anda
 
 Pastikan anda mempunyai fail yang ingin diproses dalam folder tertentu. Folder ini perlu mengandungi fail-fail dengan format .csv, .xls, .xlsx, .pdf, .docx, dan .txt dan lain-lain.
-
+  ```bash
 Ubah nilai folder_path dalam skrip Python anda kepada laluan folder di mana fail-fail tersebut berada. Lihat pada line 
 bernombor 241 (/home/kali/Documents/test) ubah kepada lokasi dimana anda letakkan file dan skrip ini.
-
+ ```
 6. Jalankan Skrip
 
 Jalankan skrip Python dengan arahan berikut:
+  ```bash
 python cari.py
-
+ ```
 
 7. Masukkan Nilai Carian dan Bilangan Hasil
 
