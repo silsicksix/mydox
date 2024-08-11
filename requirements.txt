@@ -6,6 +6,6 @@ textract==1.6.3
 colorama
 pyfiglet
 tabulate
-spacy
+spacy==3.4.0
 transformers
 torch
