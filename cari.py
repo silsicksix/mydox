@@ -36,10 +36,10 @@ def print_doxing_header():
 
 # Install spacy dan model bahasa yang dibutuhkan
 subprocess.check_call(["pip", "install", "spacy"])
-subprocess.check_call(["python", "-m", "spacy", "download", "en_core_web_sm"])
+subprocess.check_call(["python", "-m", "spacy", "download", "en_core_web_lg"])
 
 # Load model bahasa spacy
-nlp = spacy.load("en_core_web_sm")
+nlp = spacy.load("en_core_web_lg")
 
 # Kemaskini pandas jika perlu
 subprocess.check_call(["pip", "install", "--upgrade", "pandas"])
