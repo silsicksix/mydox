@@ -1,4 +1,37 @@
+import subprocess
+import sys
+
+def install_requirements():
+    """Install requirements from requirements.txt if not already installed."""
+    try:
+        import pandas
+        import spacy
+        import os
+        from tabulate import tabulate
+        from colorama import Fore, Style, init
+        from pyfiglet import Figlet
+        from PyPDF2 import PdfReader
+        import docx
+        import re
+        import webbrowser
+    except ImportError as e:
+        print(f"Missing module: {e.name}. Installing...")
+        subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-r', 'requirements.txt'])
+
+# Call the function to ensure all requirements are installed
+install_requirements()
+
+# Import modules after ensuring they are installed
 import spacy
+import pandas as pd
+import os
+from tabulate import tabulate
+from colorama import Fore, Style, init
+from pyfiglet import Figlet
+from PyPDF2 import PdfReader
+import docx
+import re
+import webbrowser
 
 # Muatkan model bahasa
 nlp = spacy.load("en_core_web_lg")
@@ -10,33 +43,6 @@ doc = nlp(text)
 # Paparkan hasil analisis
 for token in doc:
     print(f"{token.text}: {token.pos_}, {token.dep_}")
-
-
-import subprocess
-import sys
-
-def install_requirements():
-    """Install requirements from requirements.txt if not already installed."""
-    try:
-        import pandas
-        import spacy
-        # Add other imports here if necessary
-    except ImportError as e:
-        print(f"Missing module: {e.name}. Installing...")
-        subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-r', 'requirements.txt'])
-
-# Call the function to ensure all requirements are installed
-install_requirements()
-import pandas as pd
-import os
-from tabulate import tabulate
-from colorama import Fore, Style, init
-from pyfiglet import Figlet
-from PyPDF2 import PdfReader
-import docx
-import re
-import webbrowser
-
 
 # Inisialisasi colorama
 init(autoreset=True)
