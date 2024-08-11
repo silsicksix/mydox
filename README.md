@@ -9,9 +9,7 @@ Sebelum Anda memulakan, pastikan anda mempunyai:
 
     Pakej-pakej yang diperlukan: Skrip ini memerlukan beberapa pustaka Python yang akan diinstal melalui requirements.txt.
 
-Langkah-Langkah
-1. Clone Repositori
-
+Langkah-Langkah:
 Clone repositori GitHub ini ke mesin anda:
 1. **Clone repositori:**
 
